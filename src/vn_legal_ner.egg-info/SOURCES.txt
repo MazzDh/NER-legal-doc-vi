@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/ner_pipeline/__init__.py
+src/ner_pipeline/convert.py
+src/vn_legal_ner.egg-info/PKG-INFO
+src/vn_legal_ner.egg-info/SOURCES.txt
+src/vn_legal_ner.egg-info/dependency_links.txt
+src/vn_legal_ner.egg-info/requires.txt
+src/vn_legal_ner.egg-info/top_level.txt
+tests/test_convert_smoke.py

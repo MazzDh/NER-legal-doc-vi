@@ -1,0 +1,15 @@
+{
+  "O": 0,
+  "B-LEGAL_TYPE": 1,
+  "I-LEGAL_TYPE": 2,
+  "B-DOC_NUM": 3,
+  "I-DOC_NUM": 4,
+  "B-ISSUANCE_DATE": 5,
+  "I-ISSUANCE_DATE": 6,
+  "B-ISSUING_AUTHORITY": 7,
+  "I-ISSUING_AUTHORITY": 8,
+  "B-SIGNER": 9,
+  "I-SIGNER": 10,
+  "B-TITLE": 11,
+  "I-TITLE": 12
+}

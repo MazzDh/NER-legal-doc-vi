@@ -1,0 +1,15 @@
+pandas>=2.0
+openpyxl>=3.1
+
+[dev]
+pytest>=8.0
+
+[fuzzy]
+rapidfuzz>=3.9
+
+[train]
+transformers>=4.45
+datasets>=2.21
+evaluate>=0.4
+seqeval>=1.2
+torch>=2.2

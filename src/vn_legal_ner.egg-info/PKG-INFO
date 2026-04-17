@@ -1,0 +1,99 @@
+Metadata-Version: 2.4
+Name: vn-legal-ner
+Version: 0.1.0
+Summary: Vietnamese legal document NER pipeline (convert + PhoBERT training)
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=2.0
+Requires-Dist: openpyxl>=3.1
+Provides-Extra: train
+Requires-Dist: transformers>=4.45; extra == "train"
+Requires-Dist: datasets>=2.21; extra == "train"
+Requires-Dist: evaluate>=0.4; extra == "train"
+Requires-Dist: seqeval>=1.2; extra == "train"
+Requires-Dist: torch>=2.2; extra == "train"
+Provides-Extra: fuzzy
+Requires-Dist: rapidfuzz>=3.9; extra == "fuzzy"
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+
+# Vietnamese Legal NER (PhoBERT) - v1 Scaffold
+
+This repository contains:
+- A semi-automatic converter from `legal_documents.xlsx` to BIO JSONL (`train/val/test`)
+- A review queue for low-confidence/conflicting labels
+- A PhoBERT token-classification training script
+
+## 1) Install
+
+```bash
+pip install -e .
+pip install -e ".[train,fuzzy,dev]"
+```
+
+## 2) Convert Excel -> BIO JSONL
+
+```bash
+python scripts/convert_legal_xlsx.py \
+  --xlsx-path "C:\Users\LENOVO\.cache\huggingface\hub\datasets--minhdoan17--vietnamese-legal-documents\legal_documents.xlsx" \
+  --output-dir "E:\NER\data\processed" \
+  --fuzzy-threshold 85
+```
+
+Outputs:
+- `train.jsonl`
+- `val.jsonl`
+- `test.jsonl`
+- `review_queue.jsonl`
+- `label_map.json`
+- `summary.json`
+
+## 3) Train PhoBERT NER
+
+```bash
+python scripts/train_phobert_ner.py \
+  --data-dir "E:\NER\data\processed" \
+  --label-map "E:\NER\data\processed\label_map.json" \
+  --output-dir "E:\NER\runs\phobert-v1" \
+  --model-name "vinai/phobert-base-v2" \
+  --num-train-epochs 4 \
+  --learning-rate 3e-5 \
+  --batch-size 8
+```
+
+## 3.2) Inference demo (single text)
+
+```bash
+python scripts/infer_demo.py \
+  --model-dir "E:\NER\runs\phobert-v1\best_model" \
+  --text "Nghị quyết số 115/NQ-HĐBCQG do Hội đồng bầu cử quốc gia ban hành ngày 29/01/2026, người ký Trần Thanh Mẫn." \
+  --output-json "E:\NER\runs\phobert-v1\demo_prediction.json"
+```
+
+## 3.1) Validate Phase 1 dataset quality
+
+```bash
+python scripts/validate_phase1_dataset.py \
+  --data-dir "E:\NER\data\processed" \
+  --label-map "E:\NER\data\processed\label_map.json"
+```
+
+```bash
+python scripts/review_queue_report.py \
+  --review-queue "E:\NER\data\processed\review_queue.jsonl"
+```
+
+## 4) Entity set (v1 core)
+
+- `LEGAL_TYPE`
+- `DOC_NUM`
+- `ISSUANCE_DATE`
+- `ISSUING_AUTHORITY`
+- `SIGNER`
+- `TITLE`
+
+## Notes
+
+- Converter labels all occurrences when a candidate appears multiple times.
+- `signers` is parsed as text before `:`.
+- `issuance_date` is kept as both raw and ISO (`YYYY-MM-DD`).
